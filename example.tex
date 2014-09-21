@@ -1,0 +1,44 @@
+\documentclass{upecha}
+\usepackage{polyglossia}
+\usepackage{fontspec}
+\sloppy
+\setdefaultlanguage{tibetan}
+\newfontfamily{\tibetanfont}[Script=Tibetan]{Tibetan Machine Uni}
+\begin{document}
+
+\pechatitle{{\LARGE blabla}}{{\LARGE blabla}}
+
+\newpage
+\null
+\ClearShipoutPicture %
+\newpage
+\pechasetbackground{background3.pdf}
+
+\makeatletter
+\c@page=1
+\makeatother
+
+\pechaintrolayout
+
+\oddright[0]{{\bispage}}
+\evenright[0]{{\bispage}}
+\oddleft[0]{}
+\evenleft[1]{{སྔགས་\hfill\tibnumeral{\thepage}\hfill འབུམ།}}
+
+\ 
+
+\vskip 2mm
+།རྒྱལ་བ་བཀལ་ blablabla
+
+Blablabla.
+
+\newpage
+
+\ 
+
+\vskip 2mm
+།རྒྱལ་བ་བཀལ་ blablabla
+
+Blablabla.
+
+\end{document}

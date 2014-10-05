@@ -87,9 +87,9 @@ end
 function bispage(num)
   num = tonumber(num)
   if num % 2 == 1 then
-    tex.print(floor(num/2) .. "b")
+    tex.print((num+1)/2)
   else
-    tex.print(num/2)
+    tex.print(floor((num+1)/2) .. "b")
   end
 end
 

@@ -4,21 +4,18 @@
 \sloppy
 \setdefaultlanguage{tibetan}
 \newfontfamily{\tibetanfont}[Script=Tibetan]{Tibetan Machine Uni}
+
 \begin{document}
 
-\pechatitle{{\LARGE blabla}}{{\LARGE blabla}}
+\pechatitle{{\LARGE blabla}}
 
-\newpage
-\null
-\ClearShipoutPicture %
-\newpage
-\pechasetbackground{background3.pdf}
+\cleardoublepage
 
 \makeatletter
 \c@page=1
 \makeatother
 
-\pechaintrolayout
+\pechasetlayout{intro}
 
 \oddright[0]{{\bispage}}
 \evenright[0]{{\bispage}}
@@ -40,5 +37,21 @@ Blablabla.
 །རྒྱལ་བ་བཀལ་ blablabla
 
 Blablabla.
+
+\begin{titleanypage}
+\pechatitle{{\LARGE Another title!}}
+\end{titleanypage}
+
+blabla on new page
+
+\newpage
+
+blabla on odd page
+
+\begin{titlepage}
+\pechatitle{{\LARGE Another title on odd page!}}
+\end{titlepage}
+
+blabla on new page
 
 \end{document}

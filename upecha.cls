@@ -16,6 +16,10 @@
 %  - simplifying a lot the layout code and making it more flexible
 %  - adding an optional argument to the headers to set them rotated or not.
 
+% Defines the following environments:
+% - titlepage : opening on the bottom (odd pages)
+% - titleanypage : opening on any page
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{upecha}[2014/09/21 v0.8 tibetan modern pecha class]
 
@@ -98,7 +102,7 @@
 % #5 is the total margin width
 % #6 is the textheight
 % #7 is the image to put in the background
-\def\pechasetlayout#1#2#3#4#5#6{%
+\def\upecha@setlayout#1#2#3#4#5#6{%
   \newpage %
   \global\@margindp #1%
   \global\@marginht #5%
@@ -118,17 +122,23 @@
 
 \def\pechasetbackground#1{%
   \ClearShipoutPicture{}%
-  \AddToShipoutPicture{%
-    \setlength{\@tempdimb}{.5\paperwidth}%
-    \setlength{\@tempdimc}{.5\paperheight}%
-    \setlength{\unitlength}{1pt}%
-    \put(\strip@pt\@tempdimb,\strip@pt\@tempdimc){%
-    \makebox(0,0){\includegraphics{#1}}%
+  \if\relax\detokenize{#1}\relax\else %
+    \AddToShipoutPicture{%
+      \setlength{\@tempdimb}{.5\paperwidth}%
+      \setlength{\@tempdimc}{.5\paperheight}%
+      \setlength{\unitlength}{1pt}%
+      \put(\strip@pt\@tempdimb,\strip@pt\@tempdimc){%
+      \makebox(0,0){\includegraphics{#1}}%
+      }%
     }%
-  }%
+  \fi %
 }
 
-\def\pechatitle#1#2{%
+\def\pechatitle#1{%
+  \pechatitlecenterat{#1}{#1}%
+}
+
+\def\pechatitlecenterat#1#2{%
   \pechatitlelayout %
   \setbox\@obox=\hbox{#2}%
   \begin{center}%
@@ -138,6 +148,43 @@
   \leavevmode %
   \vbox to \textheight{\vss\box\@pbox\vss}%
   \end{center}%
+}
+
+\pagestyle{empty}
+
+
+% cleardoublepage really does its job
+\def\cleardoublepage{\clearpage %
+  \ifodd\c@page\else %
+   \xdef\upecha@title@oldlayout{\upecha@layout}%
+   \pechasetlayout{empty}
+   \upechanoheaders %
+   \null\newpage %
+   \upecharestoreheaders %
+   \pechasetlayout{\upecha@title@oldlayout}%
+  \fi %
+ }%
+
+\newenvironment{titleanypage}
+{%
+  \clearpage %
+  \xdef\upecha@title@oldlayout{\upecha@layout}%
+  \pechasetlayout{title}
+}%
+{%
+  \pechasetlayout{\upecha@title@oldlayout}%
+  \newpage %
+}
+
+\newenvironment{titlepage}
+{%
+  \cleardoublepage %
+  \xdef\upecha@title@oldlayout{\upecha@layout}%
+  \pechasetlayout{title}
+}%
+{%
+  \pechasetlayout{\upecha@title@oldlayout}%
+  \newpage %
 }
 
 \newcommand{\pechavcenter}[2][0pt]{
@@ -153,18 +200,30 @@
 }
 
 \def\pechanormallayout{%
-  \pechasetlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{background1.pdf}%
+  \xdef\upecha@layout{normal}%
+  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{background1.pdf}%
 }
 
 \def\pechatitlelayout{%
-  \pechasetlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{background3.pdf}%
+  \xdef\upecha@layout{normal}%
+  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{background3.pdf}%
 }
 
 \def\pechaintrolayout{%
-  \pechasetlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{background2.pdf}%
+  \xdef\upecha@layout{normal}%
+  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{background2.pdf}%
 }
 
-\pechanormallayout
+\def\pechaemptylayout{%
+  \xdef\upecha@layout{empty}%
+  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{}%
+}
+
+\def\pechasetlayout#1{%
+  \csname pecha#1layout\endcsname %
+}
+
+\pechasetlayout{normal}
 
 \pagenumbering{arabic}
 %\sloppy
@@ -196,6 +255,24 @@
 \newcommand{\oddright}[2][0]{\gdef\@orightrotate{#1}\gdef\@oright{#2}}
 \newcommand{\evenleft}[2][1]{\gdef\@eleftrotate{#1}\gdef\@eleft{#2}}
 \newcommand{\evenright}[2][0]{\gdef\@erightrotate{#1}\gdef\@eright{#2}}
+
+\def\upechanoheaders{%
+  \global\let\save@oleft\@oleft %
+  \global\let\save@oright\@oright %
+  \global\let\save@eleft\@eleft %
+  \global\let\save@eright\@eright %
+  \xdef\@oleft{}%
+  \xdef\@oright{}%
+  \xdef\@eleft{}%
+  \xdef\@eright{}%
+}
+
+\def\upecharestoreheaders{%
+  \global\let\@oleft\save@oleft %
+  \global\let\@oright\save@oright %
+  \global\let\@eleft\save@eleft %
+  \global\let\@eright\save@eright %
+}
 
 % ignore standard chapter marks
 \newcommand{\paragraph}[1]{}

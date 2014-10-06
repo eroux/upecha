@@ -102,7 +102,7 @@
 % #5 is the total margin width
 % #6 is the textheight
 % #7 is the image to put in the background
-\def\upecha@setlayout#1#2#3#4#5#6{%
+\def\upecha@setlayout#1#2#3#4#5#6#7{%
   \newpage %
   \global\@margindp #1%
   \global\@marginht #5%
@@ -117,7 +117,8 @@
   \global\advance\textwidth by - 2\@margindp %
   \global\hsize\textwidth %
   \global\linewidth\textwidth %
-  \global\pechasetbackground{#6}%
+  \global\setlength{\textheight}{#6}%
+  \global\pechasetbackground{#7}%
 }
 
 \def\pechasetbackground#1{%
@@ -201,22 +202,22 @@
 
 \def\pechanormallayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{background1.pdf}%
+  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{5cm}{background1.pdf}%
 }
 
 \def\pechatitlelayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{background3.pdf}%
+  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{5cm}{background3.pdf}%
 }
 
 \def\pechaintrolayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{background2.pdf}%
+  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{5cm}{background2.pdf}%
 }
 
 \def\pechaemptylayout{%
   \xdef\upecha@layout{empty}%
-  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{}%
+  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{5cm}{}%
 }
 
 \def\pechasetlayout#1{%

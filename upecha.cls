@@ -33,7 +33,7 @@
 \DeclareOption{final}{\setlength\overfullrule{0pt}}
 
 % execute default options
-\ExecuteOptions{11pt,final}
+\ExecuteOptions{12pt,final}
 
 % process given options
 \ProcessOptions\relax
@@ -73,6 +73,7 @@
 \newlength{\@margincenterbegin}
 \newlength{\@margincenterwidth}
 \newlength{\@marginaftercenter}
+\newlength{\@headerheight}
 
 \newcounter{pechasheet}
 \setcounter{pechasheet}{\@ne}
@@ -86,13 +87,10 @@
 \marginparpush 0pt
 \oddsidemargin -1in % meaning 0 in fact
 \evensidemargin -1in
+\raggedbottom
 
-% TODO: option
-\global\textheight 77mm
-\global\vsize\textheight
-\global\topmargin-0.5\textheight
-\global\advance\topmargin by 0.5\paperheight
-\global\advance\topmargin by - 1in
+\global\setlength{\headheight}{0pt}%
+\global\setlength{\headsep}{0pt}%
 
 % the main layout function
 % #1 is the width between the border and the margin text baseline in case of rotated margin text
@@ -101,8 +99,9 @@
 % #4 is the width of the box where to center margin text in case of non-rotated margin text
 % #5 is the total margin width
 % #6 is the textheight
+% #6 is the height of the "headers" when rotated
 % #7 is the image to put in the background
-\def\upecha@setlayout#1#2#3#4#5#6#7{%
+\def\upecha@setlayout#1#2#3#4#5#6#7#8{%
   \newpage %
   \global\@margindp #1%
   \global\@marginht #5%
@@ -118,7 +117,12 @@
   \global\hsize\textwidth %
   \global\linewidth\textwidth %
   \global\setlength{\textheight}{#6}%
-  \global\pechasetbackground{#7}%
+  \global\vsize\textheight %
+  \global\topmargin-0.5\textheight %
+  \global\advance\topmargin by 0.5\paperheight %
+  \global\advance\topmargin by - 1in%
+  \global\setlength{\@headerheight}{#7}%
+  \global\pechasetbackground{#8}%
 }
 
 \def\pechasetbackground#1{%
@@ -202,22 +206,22 @@
 
 \def\pechanormallayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{5cm}{background1.pdf}%
+  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{7.7cm}{7.7cm}{background1.pdf}%
 }
 
 \def\pechatitlelayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{5cm}{background3.pdf}%
+  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{4.3cm}{7.7cm}{background3.pdf}%
 }
 
 \def\pechaintrolayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{5cm}{background2.pdf}%
+  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{7.7cm}{7.7cm}{background2.pdf}%
 }
 
 \def\pechaemptylayout{%
   \xdef\upecha@layout{empty}%
-  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{5cm}{}%
+  \upecha@setlayout{1.85cm}{1.85cm}{1.65cm}{7.8mm}{2.9cm}{7.7cm}{7.7cm}{}%
 }
 
 \def\pechasetlayout#1{%
@@ -290,13 +294,13 @@
 % The left "header" on odd pages
 \def\@oddleft{%
   \ifnum\@oleftrotate=1%
-    \setbox\@pbox\hbox to \textheight{%
+    \setbox\@pbox\hbox to \@headerheight{%
           \hss\@oleft\hss %
         }%
     \ht\@pbox=\@marginht %
     \dp\@pbox=\@margindp %
     \begin{turn}{-90}%
-      \kern-\textheight\box\@pbox %
+      \kern-\@headerheight\box\@pbox %
     \end{turn}%
   \else %
     \setbox\@pbox\hbox{%
@@ -304,11 +308,8 @@
       \hbox to \@margincenterwidth{\hss\@oleft\hss}%
       \kern\@marginaftercenter %
     }%
-    %\hbox{\vrule width 2mm height \vsize}
-    %\raise 9cm\hbox{\vrule width 4mm height -\topmargin}%
-    \@tempdimb=0.5\vsize %
+    \@tempdimb=0.5\@headerheight %
     \advance\@tempdimb by -0.5\ht\@pbox %
-    %\@tempdimb %
     \raise\@tempdimb\box\@pbox %
   \fi %
 }
@@ -316,13 +317,13 @@
 % the left "header" on even pages
 \def\@evenleft{%
   \ifnum\@eleftrotate=1%
-    \setbox\@pbox\hbox to \textheight{%
+    \setbox\@pbox\hbox to \@headerheight{%
           \hss\@eleft\hss %
         }%
     \ht\@pbox=\@marginht %
     \dp\@pbox=\@margindp %
     \begin{turn}{-90}%
-      \kern-\textheight\box\@pbox %
+      \kern-\@headerheight\box\@pbox %
     \end{turn}%
   \else %
     \setbox\@pbox\hbox{%
@@ -330,7 +331,7 @@
       \hbox to \@margincenterwidth{\hss\@eleft\hss}%
       \kern\@marginaftercenter %
     }%
-    \@tempdima=0.5\textheight %
+    \@tempdima=0.5\@headerheight %
     \advance\@tempdima by -0.5\ht\@pbox %
     \raise \@tempdima\box\@pbox %
   \fi %
@@ -339,7 +340,7 @@
 % The right "header" on odd pages
 \def\@oddright{%
   \ifnum\@orightrotate=1%
-    \setbox\@pbox\hbox to \textheight{%
+    \setbox\@pbox\hbox to \@headerheight{%
         \hss\@oright\hss}%
     \ht\@pbox=\@marginht %
     \dp\@pbox=\@margindp %
@@ -352,7 +353,7 @@
       \hbox to \@margincenterwidth{\hss\@oright\hss}%
       \kern\@margincenterbegin %
     }%
-    \@tempdima=0.5\textheight %
+    \@tempdima=0.5\@headerheight %
     \advance\@tempdima by -0.5\ht\@pbox %
     \raise \@tempdima\box\@pbox %
   \fi %
@@ -361,7 +362,7 @@
 % The right "header" on even pages
 \def\@evenright{%
   \ifnum\@erightrotate=1%
-    \setbox\@pbox\hbox to \textheight{%
+    \setbox\@pbox\hbox to \@headerheight{%
         \hss\@eright\hss}%
     \ht\@pbox=\@marginht %
     \dp\@pbox=\@margindp %
@@ -374,7 +375,7 @@
       \hbox to \@margincenterwidth{\hss\@eright\hss}%
       \kern\@margincenterbegin %
     }%
-    \@tempdima=0.5\textheight %
+    \@tempdima=0.5\@headerheight %
     \advance\@tempdima by -0.5\ht\@pbox %
     \raise \@tempdima\box\@pbox %
   \fi %

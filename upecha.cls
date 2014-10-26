@@ -210,12 +210,12 @@
 
 \def\pechatitlelayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{4.3cm}{7.7cm}{background3.pdf}%
+  \upecha@setlayout{3.2cm}{3.2cm}{2.7cm}{2.95cm}{7.1cm}{1.9cm}{7.7cm}{background3.pdf}%
 }
 
 \def\pechaintrolayout{%
   \xdef\upecha@layout{normal}%
-  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{7.7cm}{7.7cm}{background2.pdf}%
+  \upecha@setlayout{1.9cm}{1.9cm}{1.65cm}{7.8mm}{6.05cm}{6.7cm}{7.7cm}{background2.pdf}%
 }
 
 \def\pechaemptylayout{%

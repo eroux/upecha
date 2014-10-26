@@ -21,7 +21,7 @@
 % - titleanypage : opening on any page
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{upecha}[2014/09/21 v0.8 tibetan modern pecha class]
+\ProvidesClass{upecha}[2014/10/26 v0.9 tibetan modern pecha class]
 
 \newcommand\@ptsize{}
 \DeclareOption{10pt}{\renewcommand\@ptsize{0}}
@@ -89,9 +89,6 @@
 \evensidemargin -1in
 \raggedbottom
 
-\global\setlength{\headheight}{0pt}%
-\global\setlength{\headsep}{0pt}%
-
 % the main layout function
 % #1 is the width between the border and the margin text baseline in case of rotated margin text
 % #2 is the width between the border and the margin text baseline in case of rotated tibetan text
@@ -99,8 +96,8 @@
 % #4 is the width of the box where to center margin text in case of non-rotated margin text
 % #5 is the total margin width
 % #6 is the textheight
-% #6 is the height of the "headers" when rotated
-% #7 is the image to put in the background
+% #7 is the height of the "headers" when rotated
+% #8 is the image to put in the background
 \def\upecha@setlayout#1#2#3#4#5#6#7#8{%
   \newpage %
   \global\@margindp #1%
@@ -117,7 +114,9 @@
   \global\hsize\textwidth %
   \global\linewidth\textwidth %
   \global\setlength{\textheight}{#6}%
-  \global\vsize\textheight %
+  \global\setlength{\vsize}{#6}%
+  \global\setlength{\@colht}{\textheight}%
+  \global\setlength{\@colroom}{\textheight}%
   \global\topmargin-0.5\textheight %
   \global\advance\topmargin by 0.5\paperheight %
   \global\advance\topmargin by - 1in%
@@ -291,112 +290,53 @@
 \newcommand{\newsheet}{\clearpage\ifodd\c@page\else
     \hbox{}\newpage\fi}
 
-% The left "header" on odd pages
-\def\@oddleft{%
-  \ifnum\@oleftrotate=1%
-    \setbox\@pbox\hbox to \@headerheight{%
-          \hss\@oleft\hss %
-        }%
+% Generic "header"
+\def\upecha@header#1#2#3#4#5#6{%
+  \ifnum#2=1%
+    \setbox\@pbox\hbox to \textheight{\hss\hbox to \@headerheight{%
+        \hss#1\hss}\hss}%
     \ht\@pbox=\@marginht %
     \dp\@pbox=\@margindp %
-    \begin{turn}{-90}%
-      \kern-\@headerheight\box\@pbox %
+    \begin{turn}{#6}%
+      \kern#3\box\@pbox %
     \end{turn}%
   \else %
     \setbox\@pbox\hbox{%
-      \kern\@margincenterbegin %
-      \hbox to \@margincenterwidth{\hss\@oleft\hss}%
-      \kern\@marginaftercenter %
+      \kern#4%
+      \hbox to \@margincenterwidth{\hss#1\hss}%
+      \kern#5%
     }%
-    \@tempdimb=0.5\@headerheight %
+    \@tempdimb=0.5\textheight %
     \advance\@tempdimb by -0.5\ht\@pbox %
     \raise\@tempdimb\box\@pbox %
   \fi %
 }
 
+% The left "header" on odd pages
+\def\@oddleft{%
+  \upecha@header{\@oleft}{\@oleftrotate}{-\textheight}{\@margincenterbegin}{\@marginaftercenter}{-90}%
+}
+
 % the left "header" on even pages
 \def\@evenleft{%
-  \ifnum\@eleftrotate=1%
-    \setbox\@pbox\hbox to \@headerheight{%
-          \hss\@eleft\hss %
-        }%
-    \ht\@pbox=\@marginht %
-    \dp\@pbox=\@margindp %
-    \begin{turn}{-90}%
-      \kern-\@headerheight\box\@pbox %
-    \end{turn}%
-  \else %
-    \setbox\@pbox\hbox{%
-      \kern\@margincenterbegin %
-      \hbox to \@margincenterwidth{\hss\@eleft\hss}%
-      \kern\@marginaftercenter %
-    }%
-    \@tempdima=0.5\@headerheight %
-    \advance\@tempdima by -0.5\ht\@pbox %
-    \raise \@tempdima\box\@pbox %
-  \fi %
+  \upecha@header{\@eleft}{\@eleftrotate}{-\textheight}{\@margincenterbegin}{\@marginaftercenter}{-90}%
 }
 
 % The right "header" on odd pages
 \def\@oddright{%
-  \ifnum\@orightrotate=1%
-    \setbox\@pbox\hbox to \@headerheight{%
-        \hss\@oright\hss}%
-    \ht\@pbox=\@marginht %
-    \dp\@pbox=\@margindp %
-    \begin{turn}{90}%
-      \box\@pbox %
-    \end{turn}%
-  \else %
-    \setbox\@pbox\hbox{%
-      \kern\@marginaftercenter %
-      \hbox to \@margincenterwidth{\hss\@oright\hss}%
-      \kern\@margincenterbegin %
-    }%
-    \@tempdima=0.5\@headerheight %
-    \advance\@tempdima by -0.5\ht\@pbox %
-    \raise \@tempdima\box\@pbox %
-  \fi %
+  \upecha@header{\@oright}{\@orightrotate}{0pt}{\@marginaftercenter}{\@margincenterbegin}{90}%
 }
 
 % The right "header" on even pages
 \def\@evenright{%
-  \ifnum\@erightrotate=1%
-    \setbox\@pbox\hbox to \@headerheight{%
-        \hss\@eright\hss}%
-    \ht\@pbox=\@marginht %
-    \dp\@pbox=\@margindp %
-    \begin{turn}{90}%
-      \box\@pbox %
-    \end{turn}%
-  \else %
-    \setbox\@pbox\hbox{%
-      \kern\@marginaftercenter %
-      \hbox to \@margincenterwidth{\hss\@eright\hss}%
-      \kern\@margincenterbegin %
-    }%
-    \@tempdima=0.5\@headerheight %
-    \advance\@tempdima by -0.5\ht\@pbox %
-    \raise \@tempdima\box\@pbox %
-  \fi %
+  \upecha@header{\@eright}{\@erightrotate}{0pt}{\@marginaftercenter}{\@margincenterbegin}{90}%
 }
 
 \def\@pechaframe#1{%
-  \hbox{%
-    \vbox{%
-      \hbox{%
-        \@theleft % left box content
-        \vbox{%
-          \box#1%
-        }%
-        \@theright %
-      }%
-    }%
-  }%
+  \@theleft % left box content
+  \vbox{\box#1}%
+  \@theright %
 }
-
-\makeatletter
-\def\@outputpage{\pecha@outputpage}
 
 \def\pecha@outputpage{%
   \begingroup %
@@ -407,13 +347,6 @@
     \@parboxrestore %
     \let\protect\noexpand %
     \@resetactivechars %
-    % a hack for empty pages: These need to be framed properly
-    \ifodd\count\z@ %
-         \let\@themargin\oddsidemargin %
-    \else %
-         \let\@themargin\evensidemargin %
-      \fi %
-    \setbox\@outputbox\vbox{\hfil\box\@outputbox\hfil}%
     \ifodd\c@page %
       \let\@theleft\@oddleft %
       \let\@theright\@oddright %
@@ -434,12 +367,12 @@
       \baselineskip \footskip %
       \@begindvi %
       \vskip \topmargin %
-      \moveright\@themargin %
+      \moveright -1in%
       \box\@outputbox %
     }%
   \stepcounter{page}%
 }
-\makeatother
+
+\def\@outputpage{\pecha@outputpage}
 
 \endinput
-
